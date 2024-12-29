@@ -1,0 +1,83 @@
+﻿@model carRentalApp.Models.Car
+@{
+    ViewData["Title"] = "Car Update";
+}
+
+<h2 class="text-center">Active Working and Maintenance Time Entry</h2>
+
+<form asp-action="Update" method="post" class="row g-3" id="updateForm">
+    <div class="col-md-4 mx-auto">
+        <label for="PlateNumber" class="form-label">Car Plate Number</label>
+        <input asp-for="PlateNumber" class="form-control" id="PlateNumber" placeholder="Enter plate number" oninput="this.value = this.value.toUpperCase()" required />
+    </div>
+
+    <div class="col-md-4 mx-auto" id="carNameDiv" style="display:none;">
+        <label for="CarName" class="form-label">Car Name</label>
+        <input asp-for="CarName" class="form-control" id="CarName" readonly placeholder="Car name will be filled automatically" />
+    </div>
+
+    <div class="col-md-4 mx-auto" id="activeWorkingDiv" style="display:none;">
+        <label for="ActiveWorkingTime" class="form-label">Active Working Time</label>
+        <input asp-for="ActiveWorkingTime" class="form-control" id="ActiveWorkingTime" placeholder="Time (hours)" type="number" step="0.01" min="0" required />
+    </div>
+
+    <div class="col-md-4 mx-auto" id="maintenanceTimeDiv" style="display:none;">
+        <label for="MaintenanceTime" class="form-label">Maintenance Time</label>
+        <input asp-for="MaintenanceTime" class="form-control" id="MaintenanceTime" placeholder="Time (hours)" type="number" step="0.01" min="0" required />
+    </div>
+
+    <!-- Query and Update Buttons -->
+    <div class="col-12 text-center">
+        <button type="button" class="btn btn-info" id="queryButton">Query</button>
+        <button type="submit" class="btn btn-primary" id="updateButton" style="display:none;">Update</button>
+    </div>
+
+    <!-- Information message -->
+    <div class="col-12 mx-auto" id="infoMessage" style="display:none;">
+        <p id="infoText" class="text-center"></p>
+    </div>
+</form>
+
+<script>
+    // When the Query button is clicked, check the car information based on the plate number
+    document.getElementById("queryButton").addEventListener("click", function () {
+        const plateNumber = document.getElementById("PlateNumber").value;
+
+        // If the plate number is empty, show an alert and stop the process
+        if (plateNumber.trim() === "") {
+            alert("Please enter a valid plate number.");
+            return;
+        }
+        // Fetch the car name based on the plate number
+        fetch(`/User/GetCarName?plateNumber=${plateNumber}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Car not found.");
+                return response.json();
+            })
+            .then(data => {
+                // If the car is found, fill the car name and display the related fields
+                document.getElementById("CarName").value = data.carName;
+                document.getElementById("carNameDiv").style.display = "block";
+                document.getElementById("activeWorkingDiv").style.display = "block";
+                document.getElementById("maintenanceTimeDiv").style.display = "block";
+                document.getElementById("updateButton").style.display = "inline-block"; // Show the Update button
+
+                // Display the success message
+                document.getElementById("infoMessage").style.display = "block";
+                document.getElementById("infoText").innerText = "Car found!";
+                document.getElementById("infoText").style.color = "green"; // Success message in green color
+                document.getElementById("queryButton").style.display = "none"; // Hide the Query button
+            })
+            .catch(error => {
+                // Display the error message
+                document.getElementById("infoMessage").style.display = "block";
+                document.getElementById("infoText").innerText = error.message;
+                document.getElementById("infoText").style.color = "red"; // Error message in red color
+                document.getElementById("carNameDiv").style.display = "none";
+                document.getElementById("activeWorkingDiv").style.display = "none";
+                document.getElementById("maintenanceTimeDiv").style.display = "none";
+                document.getElementById("updateButton").style.display = "none"; // Hide the Update button
+                document.getElementById("queryButton").style.display = "inline-block"; // Show the Query button again
+            });
+    });
+</script>

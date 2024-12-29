@@ -1,0 +1,23 @@
+﻿@model carRentalApp.Models.User
+@{
+    ViewData["Title"] = "Sign Up";
+}
+
+<h2 class="text-center">Sign Up</h2>
+
+<form id="signupForm" asp-action="SignUp" method="post" class="row g-3">
+    <div class="col-md-6 offset-md-3">
+        <label for="UserName" class="form-label">User Name</label>
+        <input asp-for="UserName" class="form-control" id="UserName" placeholder="Enter your username" required />
+        <span asp-validation-for="UserName" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6 offset-md-3">
+        <label for="PasswordHash" class="form-label">Password</label>
+        <input type="password" asp-for="PasswordHash" class="form-control" id="PasswordHash" placeholder="Enter your password" required />
+    </div>
+
+    <div class="col-12 text-center">
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+    </div>
+</form>

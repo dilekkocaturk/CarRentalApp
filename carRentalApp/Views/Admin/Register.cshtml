@@ -1,0 +1,20 @@
+﻿@model carRentalApp.Models.Car
+@{
+    ViewData["Title"] = "Car Registration";
+}
+<h2 class="text-center">Car Registration</h2>
+<form asp-action="Register" method="post" class="row g-3">
+    <div class="col-md-6">
+        <label for="CarName" class="form-label">Car Name</label>
+        <input asp-for="CarName" class="form-control" id="CarName" placeholder="Enter car name" required />
+    </div>
+    <div class="col-md-6">
+        <label for="PlateNumber" class="form-label">Plate Number</label>
+        <input asp-for="PlateNumber" class="form-control" id="PlateNumber" placeholder="Enter plate number" oninput="this.value = this.value.toUpperCase()" required />
+        <span asp-validation-for="PlateNumber" class="text-danger"></span>
+
+    </div>
+    <div class="col-12 text-center">
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+</form>

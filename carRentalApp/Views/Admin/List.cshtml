@@ -1,0 +1,85 @@
+﻿@model IEnumerable<carRentalApp.Models.Car>
+
+@{
+    ViewData["Title"] = "Car List and Graphs";
+}
+
+<h2 class="text-center">Car List</h2>
+<div class="table-responsive">
+    <table class="table table-striped text-center">
+
+        <thead>
+            <tr>
+                <th>Car Name</th>
+                <th>Plate Number</th>
+                <th>Active Working Time</th>
+                <th>Maintenance Time</th>
+                <th>Idle Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var car in Model)
+            {
+                <tr>
+                    <td>@car.CarName</td>
+                    <td>@car.PlateNumber</td>
+                    <td>@car.ActiveWorkingTime</td>
+                    <td>@car.MaintenanceTime</td>
+                    <td>@car.IdleTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<h3 class="text-center">Active Working Time Graph</h3>
+<canvas id="activeChart" width="400" height="200"></canvas>
+
+<h3 class="text-center">Idle Time Graph</h3>
+<canvas id="idleChart" width="400" height="200"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/Admin/GetChartData')
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.map(d => d.carName);
+                const activeData = data.map(d => d.activePercentage);
+                const idleData = data.map(d => d.idlePercentage);
+
+                // Active Working Time Graph
+                new Chart(document.getElementById('activeChart').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Active Working Time (%)',
+                            data: activeData,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    }
+                });
+
+                // Idle Time Graph
+                new Chart(document.getElementById('idleChart').getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Idle Time (%)',
+                            data: idleData,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error loading chart data:', error);
+            });
+    });
+</script>
